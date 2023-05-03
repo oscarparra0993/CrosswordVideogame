@@ -1,0 +1,511 @@
+// sopa de letras.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+#include <Windows.h>
+#include <stdlib.h>
+#include <string>
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <time.h>
+using namespace std;
+
+
+//Funciones
+void game();
+int colum = 25, row = 25;
+void create_matrix(char** m, int, int);
+void insert_random(char** m);
+void insert_void(char** m);
+void transform_string(string word, int word_length);
+void reverseStr(string& str);
+int calculate_sizechar(char word[]);
+void pre_insertion(char** m);
+void insertion(char** m, string word,int x ,int y);
+void print_matrix(char** m);
+boolean duplicate(char arr[], char letter);
+//word list creation
+string  list[10] = { "sancristobal","venezuela","louisville","unitedStates","Kentucky","bayernmunich","realmadrid","barcelona","tachira","dortmund" };
+int main()
+{
+   
+    
+    /*
+    for (int j = 0; j < 10; j++) {
+        /*/
+    
+    game();
+
+
+       
+}
+
+
+void game() {
+   
+    //Matrix creation
+    char** matrix = new char* [row];
+    for (int i = 0; i < row; ++i)
+        matrix[i] = new char[colum];
+    ////////////////////////////////
+    create_matrix(matrix, colum, row);
+    //////////////print word list///////////
+
+    //imprimir lista de palabras
+    /*
+    for (int j = 0; j < 10; j++) {
+        cout << list[j] << " " << endl;
+    }
+    */
+    // imprimir random
+  // insert_random(matrix);
+
+
+   //transform_string(list[1],list[1].length());
+    
+    pre_insertion(matrix);
+   print_matrix(matrix);
+
+   
+   
+}
+
+void create_matrix(char** matrix, int colum, int row) {
+    int i = 0, j = 0;
+
+    for (i = 0; i < row; i++) {
+
+        for (j = 0; j < colum; j++) {
+            matrix[i][j] = '0';
+           // cout << matrix[i][j] << " ";
+        }
+       // cout << endl;
+    }
+}
+void insert_random(char** m) {
+    srand(time(NULL));
+    int i = 0, j = 0;
+    for (i = 0; i < row; i++) {
+
+        for (j = 0; j < colum; j++) {
+            m[i][j] = rand() % 25 + 97;
+            cout << (m[i][j]) << " ";
+        }
+        cout << endl;
+    }
+}
+
+int calculate_sizechar(char v[]) {
+    int i = 0;
+    for (i = 0; v[i] != '\0'; i++) {}
+
+    return i;
+}
+
+void insert_void(char** m) {
+
+    for (int i = 0; i < row; i++) {
+
+        for (int j = 0; j < colum; j++) {
+            m[i][j] = '/0';
+        }
+    }
+}
+
+void transform_string(string word, int word_length) {
+
+    size_t length = word_length + 1;
+    char* array = new char[word_length];
+    strcpy_s(array, length, word.c_str());
+
+   
+    for (int i = 0; i < word_length; i++)
+        cout << array[i] << endl;
+
+    cout <<"tam del array: "<< calculate_sizechar(array);
+    /*
+    for (int i = 0; i < word_length; i++)
+        cout << array[i] << endl;
+        */
+}
+void reverseStr(string& str){
+    int n = str.length();
+
+    // Swap character starting from two 
+    // corners 
+    for (int i = 0; i < n / 2; i++) {
+        swap(str[i], str[n - i - 1]);
+        
+    }
+
+}
+
+void pre_insertion(char** m) {
+
+    int x = 0, y = 0, shape, reverse = 0, posx, posy, z = 0, w = 0;
+    boolean again = false, forward = false, backward = false, up = false, down = false;
+    //string loop
+
+  
+    while (true) {
+
+        if (again)
+            z = z - 1;
+        if (z == list->length() )
+            break;
+
+
+
+        //reseting booleans
+        again = false; forward = false; backward = false; up = false; down = false;
+        srand((unsigned)time(NULL));
+
+        posx = rand() % 25;
+        posy = rand() % 25;
+
+        reverse = 0; //rand() % 1;
+        shape = 2; //rand() % 2;
+
+
+
+
+        /// transform string to char array
+        int len = list[z].length();
+        size_t length = len + 1;
+        char* array = new char[len];
+        strcpy_s(array, length, list[z].c_str());
+        len = calculate_sizechar(array);
+        // cout << "string:" << list[z] << endl;
+        // cout << "len: " << len << endl;
+        // cout << "posx:" << posx << endl;
+        // cout << "posy: " << posy << endl;
+
+
+
+
+
+        if (shape == 0) {
+
+            //vertical
+
+                //forward   
+            if (posx + len < row) {
+                forward = true;
+                //cout << "entro en la primera condicion" << endl;
+                ///check if there is no obstacle
+                for (x = posx; x < (len + posx); x++) {
+
+
+                    if (m[x][posy] != '0') {
+                        // if there is a letter 
+                        if (!(duplicate(array, m[x][posy]))) { again = true; forward = false; }
+
+                    }
+
+                }
+                //backwards
+            }
+            else if (posx - len > 0) {
+                backward = true;
+                // cout << "entro en la segunda condicion" << endl;
+                 ///check if there is no obstacle
+                for (x = posx; x >= (posx - len); x--) {
+                    if (m[x][posy] != '0') {
+                        if ((!duplicate(array, m[x][posy]))) { again = true; forward = false; }
+                    }
+                }
+
+
+            }
+            else { cout << "entro en la tercera condicion" << endl; again = true; }
+
+
+            ////////////////////////////////
+              //inserting vertical word 
+
+            if (again == false) {
+                w = 0;
+
+                //cout << "entro en la cuarta condicion" << endl;
+                if (forward && !backward) {
+
+                    for (x = posx; x < (len + posx); x++) {
+                        // cout << "entro en la quinta condicion" << endl;
+                        m[x][posy] = array[w]; w++;
+                    }
+                }
+                else if (!forward && backward) {
+                    for (x = posx; x > (posx - len); x--) {
+                        // cout << "entro en la sexta condicion" << endl;
+
+                        m[x][posy] = array[w]; w++;
+                    }
+                }
+                else {
+
+                    for (x = posx; x < (len + posx); x++) {
+                        //cout << "entro en la septima condicion" << endl;
+                        m[x][posy] = array[w];
+                        cout << array[w];
+                        w++;
+                    }
+                }
+
+
+
+            }
+
+
+
+        }
+
+
+        else if (shape == 1) {
+            // horizontal
+
+
+
+
+            if (posy + len < colum) {
+                forward = true;
+
+                ///check if there is no obstacle
+                for (y = posy; y < (len + posy); y++) {
+
+
+                    if (m[posx][y] != '0') {
+                        // if there is a letter 
+                        if (!(duplicate(array, m[posx][y]))) { again = true; forward = false; }
+
+                    }
+
+                }
+                //backwards
+            }
+            else if (posy - len > 0) {
+                backward = true;
+                ///check if there is no obstacle
+                for (y = posy; y >= (posy - len); y--) {
+                    if (m[posx][y] != '0') {
+                        if ((!duplicate(array, m[posx][y]))) { again = true; forward = false; }
+                    }
+                }
+
+
+            }
+            else { cout << "entro en la tercera condicion" << endl; again = true; }
+
+            //inserting vertical word 
+            w = 0;
+            if (again == false) {
+                w = 0;
+
+                //  cout << "entro en la cuarta condicion" << endl;
+                if (forward && !backward) {
+
+                    for (y = posy; y < (len + posy); y++) {
+                        //  cout << "entro en la quinta condicion" << endl;
+                        m[posx][y] = array[w]; w++;
+                    }
+                }
+                else if (!forward && backward) {
+                    for (y = posy; y > (posy - len); y--) {
+                        // cout << "entro en la sexta condicion" << endl;
+
+                        m[posx][y] = array[w]; w++;
+                    }
+                }
+                else {
+
+                    for (y = posy; y < (len + posy); y++) {
+                        // cout << "entro en la septima condicion" << endl;
+                        m[posx][y] = array[w];
+                        cout << array[w];
+                        w++;
+                    }
+                }
+
+
+
+            }
+
+
+        }
+        else {
+            //diagonal
+   
+            if ((posx + len) < row && (posy - len) > 0) {
+                //cout << "entro en la primera condicion" << endl;
+               //cout << "string:" << list[z] << endl;
+              // cout << "len: " << len << endl;
+              // cout << "posx:" << posx << endl;
+              // cout << "posy: " << posy << endl;
+             // system("pause");
+                
+                //checking for obstacles
+                y = posy; up = true;
+                for (x = posx; x < (posx + len); x++) {
+
+                    if (m[x][y] !='0' ) {
+                    
+                        if ((!duplicate(array, m[x][y]))){  again = true; up = false; }
+                    
+                    }
+                    y--;
+                }
+
+            }
+            else if ((posx - len) > 0 && (posy + len) < colum) {
+            //   cout << "entro en la segunda  condicion" << endl;
+              //  cout << "string:" << list[z] << endl;
+              // cout << "len: " << len << endl;
+               // cout << "posx:" << posx << endl;
+             //  cout << "posy: " << posy << endl;
+            //  system("pause");
+                //checking for obstacles
+                x = posx; down = true;
+                for (y = posy; y < (posy + len); y++) {
+
+                    if (m[x][y]!='0' ) { 
+                        
+                        if ((!duplicate(array, m[x][y]))) {   again = true; down = false; }
+                    }
+                    x--;
+                }
+            }else{ again = true; down = false; }
+
+
+            //inserting words
+
+            if (!again) {
+                w = 0;
+                if (!up && down) {
+                   // cout << "entro en la tercera" << endl;
+                  //  cout << "string:" << list[z] << endl;
+                  //  cout << "len: " << len << endl;
+                 //   cout << "posx:" << posx << endl;
+                 //   cout << "posy: " << posy << endl;
+                  //  system("pause");
+                    //vertical going down
+                    x = posx;
+                    for (y = posy; y < (posy + len); y++) {
+                        m[x][y] = array[w];
+                        w++; x--;
+                    }
+                }
+                else if (up && !down) {
+                    ;
+                  // cout << "entro en la cuarta" << endl;
+                  //  cout << "string:" << list[z] << endl;
+                //    cout << "len: " << len << endl;
+               //   cout << "posx:" << posx << endl;
+                //  cout << "posy: " << posy << endl;
+                 //   system("pause");
+                    //vertical going up
+                    y = posy;
+                    for (x = posx; x < (posx + len); x++) {
+                        m[x][y] = array[w];
+                        w++; y--;
+                    }
+                }
+                else {
+                 
+                //   cout << "entro en la quinta" << endl;
+                //    cout << "string:" << list[z] << endl;
+                 //   cout << "len: " << len << endl;
+                 //   cout << "posx:" << posx << endl;
+                //   cout << "posy: " << posy << endl;
+                //   system("pause");
+                    x = posx;
+                    for (y = posy; y < (posy + len); y++) {
+                        m[x][y] = array[w];
+                        w++; x--;
+
+                    }
+
+                }
+
+
+
+            }
+
+
+
+
+
+
+
+
+            
+
+
+
+        }
+        z++;
+    }
+}
+        
+        void insertion(char** m, string word,int posx, int posy) {
+            /// transform string to char array
+            int len = word.length();
+            size_t length = len + 1;
+            char* array = new char[len];
+            cout << "entro a la funcion" << endl;
+            strcpy_s(array, length, word.c_str());
+
+
+            int i = 0, j = 0;
+
+            for (i = posx; i < row; i++) {
+
+                for (j = posy; j < colum; j++) {
+                    
+                }
+                
+            }
+
+
+
+}       
+
+        void print_matrix(char** m) {
+            int i = 0, j = 0;
+
+            for (i = 0; i < row; i++) {
+
+                for (j = 0; j < colum; j++) {
+                   
+                    cout << m[i][j] << " ";
+                }
+                cout << endl;
+            }
+
+        }
+
+        boolean duplicate(char arr[],char letter) {
+
+            int len = calculate_sizechar(arr), cont = 0;
+
+            boolean flag = false;
+
+            for (int i = 0; i < len; i++)
+                if (arr[i] != letter)
+                    cont++;
+
+
+           
+            if (cont >0)
+                return false;
+            else
+                return true;
+
+
+
+
+}
+
+
+
+
+
